@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* 父容器样式 */
+    .container {
+      width: 500px;
+      height: 500px;
+      border: 2px solid #333;
+      position: relative;
+      overflow: hidden;
+      margin: 20px;
+    }
+
+    /* 可拖拽积木块 */
+    .block {
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+      position: absolute;
+      cursor: move;
+      transition: opacity 0.2s;
+    }
+
+    /* 拖拽时的透明效果 */
+    .block.dragging {
+      opacity: 0.5;
+    }
+  </style>
+  <title>Vite App</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="block" id="draggable"></div>
+  </div>
+
+  <script>
+    const block = document.getElementById('draggable');
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+
+    block.addEventListener('mousedown', startDrag);
+
+    function startDrag(e) {
+      isDragging = true;
+      block.classList.add('dragging');
+
+      // 记录初始位置
+      initialX = block.offsetLeft;
+      initialY = block.offsetTop;
+
+      // 计算鼠标相对位置
+      startX = e.clientX;
+      startY = e.clientY;
+
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('mouseup', stopDrag);
+    }
+
+    function drag(e) {
+      if (!isDragging) return;
+
+      // 计算移动距离
+      let dx = e.clientX - startX;
+      let dy = e.clientY - startY;
+
+      // 计算新位置
+      let newX = initialX + dx;
+      let newY = initialY + dy;
+
+      // 限制在容器范围内
+      newX = Math.max(0, Math.min(newX, 500 - block.offsetWidth));
+      newY = Math.max(0, Math.min(newY, 500 - block.offsetHeight));
+
+      // 应用新位置
+      block.style.left = newX + 'px';
+      block.style.top = newY + 'px';
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      block.classList.remove('dragging');
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', stopDrag);
+    }
+  </script>
+</body>
+
+</html>
